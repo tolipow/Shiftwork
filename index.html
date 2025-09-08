@@ -2,243 +2,206 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>سیستم بررسی شیفت‌های تاکسی</title>
-
-  <!-- فونت فارسی -->
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet"/>
-
   <style>
-    :root{
-      --taxi-yellow:#ffd400;
-      --taxi-yellow-dark:#e2bd00;
-      --ink:#111;
-      --card:#111c;
-      --glass:#ffffff10;
-      --text:#0b0b0b;
-      --white:#fff;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
+    @import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap");
+
+    body {
       margin:0;
-      font-family:"Vazirmatn",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
-      color:#111;
-      background:
-        linear-gradient(135deg, #000 25%, transparent 25%) -10px 0/20px 20px,
-        linear-gradient(225deg, #000 25%, transparent 25%) -10px 0/20px 20px,
-        linear-gradient(315deg, #000 25%, transparent 25%) 0 0/20px 20px,
-        linear-gradient(45deg, #000 25%, #00000000 25%) 0 0/20px 20px,
-        radial-gradient(1200px 800px at 100% 0%, #ffe46b 0%, #ffd400 35%, #f5c400 70%, #e2bd00 100%);
-      background-attachment: fixed;
+      font-family:"Vazirmatn",sans-serif;
+      color:#fff;
+      text-align:center;
+      background: linear-gradient(135deg, #FFD700, #000);
+      position: relative;
       overflow-x:hidden;
     }
 
-    /* هدر با استرایپ تاکسی */
-    header{
-      position: sticky; top:0; z-index:5;
-      backdrop-filter: blur(8px);
-      background: linear-gradient(180deg, #ffffffaa 0%, #ffffff66 100%);
-      border-bottom: 3px solid #000;
-      box-shadow: 0 10px 30px #0006;
+    /* الگوی نوار تاکسی */
+    body::before {
+      content:"";
+      position: fixed;
+      top:0; left:0; width:100%; height:100%;
+      background-image: linear-gradient(45deg, rgba(0,0,0,0.25) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.25) 75%, transparent 75%, transparent);
+      background-size: 50px 50px;
+      z-index:0;
     }
-    .bar{
-      height:28px; background:
-        repeating-linear-gradient(90deg,
-          #000 0 44px, var(--taxi-yellow) 44px 88px);
-      border-bottom:3px solid #000;
+
+    /* توپ‌های متحرک */
+    #balls-bg {
+      position: fixed;
+      top:0; left:0; width:100%; height:100%;
+      z-index:1;
+      pointer-events: none;
     }
-    .wrap{
-      max-width:1100px; margin:0 auto; padding:18px 16px 14px;
-      display:flex; align-items:center; justify-content:space-between; gap:16px;
-    }
-    .title{
-      display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
-    }
-    .title h1{
-      margin:0; font-size:28px; font-weight:800; letter-spacing:.2px;
+    .ball {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff200, #ff9900);
+      opacity:0.8;
+      width:70px; height:70px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       color:#000;
-      text-shadow:0 1px 0 #fff3, 0 3px 10px #0003;
+      font-weight:bold;
+      font-size:1rem;
+      text-shadow:0 0 5px #fff;
+      animation: float 12s linear infinite;
     }
-    .badge{
-      background:#000; color:var(--taxi-yellow); font-weight:800;
-      padding:4px 10px; border-radius:999px; border:2px solid var(--taxi-yellow);
-    }
-    .clock{
-      font-weight:800; font-size:26px; color:#000;
-      background: var(--taxi-yellow);
-      border:2px solid #000; padding:6px 14px; border-radius:14px;
-      box-shadow: inset 0 -3px 0 #0006, 0 6px 0 #0003;
+    .ball:nth-child(1){top:15%;left:20%;animation-duration:6s;}
+    .ball:nth-child(2){top:40%;left:70%;animation-duration:8s;}
+    .ball:nth-child(3){top:65%;left:35%;animation-duration:10s;}
+    .ball:nth-child(4){top:25%;left:80%;animation-duration:12s;}
+
+    @keyframes float {
+      0%{transform: translate(0,0) rotate(0deg);}
+      50%{transform: translate(40px,-40px) rotate(180deg);}
+      100%{transform: translate(0,0) rotate(360deg);}
     }
 
-    /* توپ‌های متحرک با نوشته تاکسی */
-    #orbs{position:fixed; inset:0; pointer-events:none; z-index:0}
-    .orb{
-      position:absolute; border-radius:50%; width:80px; height:80px;
-      background:
-        radial-gradient(circle at 35% 35%, #fff9, #fff0 45%),
-        radial-gradient(circle at 70% 70%, #0003, #0008 55%),
-        conic-gradient(from 0deg, var(--taxi-yellow) 0 40%, #000 40% 50%, var(--taxi-yellow) 50% 90%, #000 90% 100%);
-      border:3px solid #000;
-      box-shadow: 0 12px 30px #0006, inset 0 0 0 3px #000;
-      display:grid; place-items:center;
-      animation: float 10s ease-in-out infinite, spin 3s linear infinite;
-      opacity:.9;
+    /* محتوا */
+    header, .section{
+      position: relative;
+      z-index:2;
     }
-    .orb span{
-      font-weight:900; font-size:16px; color:#000;
-      text-shadow:0 0 6px #ffd400, 0 0 18px #fff6;
-      letter-spacing:.8px;
-      transform:translateZ(0); /* صاف‌تر */
+    header {
+      padding:20px;
+      font-weight:bold;
+      background: rgba(0,0,0,0.7);
+      border-bottom: 3px solid #FFD700;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      position: sticky;
+      top:0;
     }
-    .orb.small{width:56px;height:56px; animation-duration:8s, 2.2s}
-    .orb.big{width:100px;height:100px; animation-duration:12s, 3.6s}
-    .orb:nth-child(1){top:12%; left:12%}
-    .orb:nth-child(2){top:58%; left:70%}
-    .orb:nth-child(3){top:30%; left:82%}
-    .orb:nth-child(4){top:72%; left:24%}
-    @keyframes float{
-      0%{transform:translate3d(0,0,0)}
-      50%{transform:translate3d(35px,-28px,0)}
-      100%{transform:translate3d(0,0,0)}
+    .title {
+      font-size:2.5rem;
+      margin-bottom:10px;
+      color:#FFD700;
+      text-shadow:0 0 15px #FFD700,0 0 25px #FFA500;
     }
-    @keyframes spin{
-      to{filter:hue-rotate(20deg); transform:rotate(360deg)}
+    .clock {
+      font-size:3rem;
+      font-weight:bold;
+      color:#fff200;
+      text-shadow:0 0 15px #FFD700,0 0 30px #FFA500;
     }
-
-    /* کارت‌ها */
-    main{position:relative; z-index:2; padding:24px 16px 56px}
-    .grid{max-width:1100px; margin:0 auto; display:grid; gap:18px}
-    .card{
-      background: linear-gradient(180deg, #fff9, #fff6);
-      border:3px solid #000; border-radius:22px;
-      box-shadow: 0 12px 0 #0003, 0 22px 40px #0007;
-      padding:18px;
-      transition: transform .2s ease, box-shadow .2s ease;
+    .section {
+      background: rgba(0,0,0,0.7);
+      margin:20px auto;
+      padding:20px;
+      border-radius:20px;
+      width:90%;
+      max-width:900px;
+      backdrop-filter: blur(8px);
+      border:2px solid #FFD700;
+      box-shadow:0 0 25px rgba(255,215,0,0.6);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .card:hover{transform:translateY(-4px); box-shadow: 0 16px 0 #0003, 0 28px 60px #0008}
-    .card h2{margin:0 0 8px; font-size:20px; font-weight:800; color:#000}
-
-    table{width:100%; border-collapse:collapse; overflow:hidden; border-radius:14px}
-    thead th{
-      background:var(--taxi-yellow); color:#000; border-bottom:3px solid #000;
-      padding:10px; font-weight:800;
+    .section:hover{
+      transform: translateY(-5px);
+      box-shadow: 0 0 40px rgba(255,215,0,0.9);
     }
-    td{padding:10px; border-bottom:1px dashed #0006; background:#fff9}
-    tr:hover td{background:#fff}
-
-    .empty{padding:8px 12px; background:#000; color:var(--taxi-yellow);
-      display:inline-block; border-radius:10px; border:2px solid var(--taxi-yellow); font-weight:800}
-
-    /* دکمه‌ها (در صورت نیاز آینده) */
-    .btn{
-      background:#000; color:var(--taxi-yellow); border:2px solid var(--taxi-yellow);
-      padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
-      box-shadow:0 6px 0 #0006; transition:transform .12s;
+    h2{
+      color:#FFD700;
+      text-shadow:0 0 10px #FFA500;
     }
-    .btn:active{transform:translateY(2px); box-shadow:0 4px 0 #0006}
+    table {
+      width:100%;
+      border-collapse: collapse;
+      margin-top:15px;
+      color:#fff;
+    }
+    th,td {
+      padding:12px;
+      border-bottom:1px solid rgba(255,255,255,0.2);
+      text-align:center;
+    }
+    table th {
+      background: linear-gradient(135deg, rgba(255,215,0,0.4), rgba(0,0,0,0.4));
+      color:#fff200;
+    }
+    tr:hover{ background: rgba(255,215,0,0.1);}
   </style>
 </head>
 <body>
-
-  <!-- توپ‌های متحرک -->
-  <div id="orbs" aria-hidden="true">
-    <div class="orb small"><span>تاکسی</span></div>
-    <div class="orb big"><span>تاکسی</span></div>
-    <div class="orb small"><span>تاکسی</span></div>
-    <div class="orb"><span>تاکسی</span></div>
+  <!-- توپ‌ها -->
+  <div id="balls-bg">
+    <div class="ball">TAXI</div>
+    <div class="ball">TAXI</div>
+    <div class="ball">TAXI</div>
+    <div class="ball">TAXI</div>
   </div>
 
-  <!-- هدر -->
+  <!-- محتوای اصلی -->
   <header>
-    <div class="bar" aria-hidden="true"></div>
-    <div class="wrap">
-      <div class="title">
-        <h1>سیستم بررسی شیفت‌ها</h1>
-        <span class="badge">TAXI • R.P</span>
-      </div>
-      <div id="clock" class="clock">۰۰:۰۰:۰۰</div>
-    </div>
+    <div class="title">سیستم بررسی شیفت‌های تاکسی</div>
+    <div class="clock" id="clock"></div>
   </header>
 
-  <!-- محتوا -->
-  <main>
-    <div class="grid">
-      <section class="card" id="current-shifts">
-        <h2>شیفت فعلی</h2>
-        <div id="shift-list"></div>
-      </section>
+  <div class="section" id="current-shifts">
+    <h2>شیفت فعلی</h2>
+    <div id="shift-list"></div>
+  </div>
 
-      <section class="card">
-        <h2>جدول کامل شیفت‌ها</h2>
-        <table id="full-schedule">
-          <thead>
-          <tr>
-            <th>نام</th>
-            <th>رنک</th>
-            <th>روز / حالت</th>
-            <th>ساعت</th>
-          </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </section>
-    </div>
-  </main>
+  <div class="section">
+    <h2>جدول کامل شیفت‌ها</h2>
+    <table id="full-schedule">
+      <thead>
+        <tr>
+          <th>نام</th>
+          <th>رنک</th>
+          <th>روز / حالت</th>
+          <th>ساعت</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-  <!-- اسکریپت -->
   <script>
-    const shifts = [
+   const shifts = [
       {name:"Danyall Abbasi",rank:"Taxi Director",times:[{days:"همه روزها",start:"20:00",end:"23:00"}]},
       {name:"Kourosh Zabeti",rank:"Taxi Deputy Director",times:[{days:"همه روزها",start:"14:00",end:"17:00"}]},
       {name:"Parham Azizi",rank:"Taxi Attendant",times:[{days:"همه روزها",start:"12:00",end:"12:01"}]},
-      {name:"Arya Khazeie",rank:"Taxi Attendant",times:[{days:"همه روزها",start:"20:30",end:"23:30"}]},
-      {name:"Abbas Abbasi",rank:"Taxi Attendant",times:[{days:"همه روزها",start:"12:00",end:"15:00"}]},
-      {name:"Taha Azizii",rank:"Taxi Attendant",times:[{days:"همه روزها",start:"9:00",end:"12:00"}]},
+      {name:"Abbas Abbasi",rank:"Taxi Attendant",times:[
+          {days:"همه روزها",start:"12:00",end:"14:00"},
+          {days:"همه روزها",start:"16:00",end:"17:00"}
+      ]},
       {name:"Parsa Rahimi",rank:"Taxi Attendant",times:[{days:"همه روزها",start:"12:00",end:"15:00"}]}
-    ];
+   ];
 
-    const rankOrder = {
-      "Taxi Director": 1,
-      "Taxi Deputy Director": 2,
-      "Taxi Manager": 3,
-      "Taxi Attendant": 4
-    };
-
-    const $ = s => document.querySelector(s);
-    const toPersianDigits = str => String(str).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
-    const timeToMins = t => { const [h,m] = t.split(":").map(Number); return h*60 + m; };
-    const isEvenDay = date => [6,1,3,5].includes(date.getDay()); // ش/د/س/چ = زوج
-
-    function updateClock(){
-      const now = new Date();
-      $("#clock").textContent =
-        `${toPersianDigits(String(now.getHours()).padStart(2,"0"))}:`+
-        `${toPersianDigits(String(now.getMinutes()).padStart(2,"0"))}:`+
-        `${toPersianDigits(String(now.getSeconds()).padStart(2,"0"))}`;
+    function $(s){return document.querySelector(s);}
+    function toPersianDigits(str){return String(str).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);}
+    function timeToMins(t){const [h,m]=t.split(":").map(Number);return h*60+m;}
+    function isEvenDay(date){
+      const day = date.getDay();
+      return [6,1,3,5].includes(day);
     }
 
+    function updateClock(){
+      const now=new Date();
+      $("#clock").textContent=`${toPersianDigits(String(now.getHours()).padStart(2,"0"))}:${toPersianDigits(String(now.getMinutes()).padStart(2,"0"))}:${toPersianDigits(String(now.getSeconds()).padStart(2,"0"))}`;
+    }
+
+    const rankOrder = {"Taxi Director":1,"Taxi Deputy Director":2,"Taxi Attendant":3};
+
     function renderFullSchedule(){
-      const tbody = $("#full-schedule tbody");
-      tbody.innerHTML = shifts
-        .slice()
-        .sort((a,b)=>(rankOrder[a.rank]||99)-(rankOrder[b.rank]||99))
-        .map(p => p.times.map(t => `
-          <tr>
-            <td>${p.name}</td>
-            <td>${p.rank}</td>
-            <td>${t.days}</td>
-            <td>${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}</td>
-          </tr>
-        `).join("")).join("");
+      const tbody=$("#full-schedule tbody");
+      tbody.innerHTML=shifts.slice().sort((a,b)=>(rankOrder[a.rank]||99)-(rankOrder[b.rank]||99))
+      .map(p=>p.times.map(t=>`
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.rank}</td>
+          <td>${t.days}</td>
+          <td>${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}</td>
+        </tr>`).join("")).join("");
     }
 
     function renderCurrentShifts(){
-      const now = new Date();
-      const curMins = now.getHours()*60 + now.getMinutes();
-      const even = isEvenDay(now);
-      const active = [];
-
+      const now=new Date();
+      const curMins=now.getHours()*60+now.getMinutes();
+      const even=isEvenDay(now);
+      const active=[];
       shifts.forEach(p=>{
         p.times.forEach(t=>{
           let match=false;
@@ -246,25 +209,20 @@
           if(t.days==="روز زوج"&&even) match=true;
           if(t.days==="روز فرد"&&!even) match=true;
           if(!match) return;
-
-          const start=timeToMins(t.start), end=timeToMins(t.end);
-          if(curMins>=start && curMins<end){
-            const remain=end-curMins, rh=Math.floor(remain/60), rm=remain%60;
-            active.push(`${p.name} (${p.rank}) — ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`);
+          const start=timeToMins(t.start),end=timeToMins(t.end);
+          if(curMins>=start&&curMins<end){
+            const remain=end-curMins;
+            const rh=Math.floor(remain/60),rm=remain%60;
+            active.push(`${p.name} (${p.rank}) - ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`);
           }
         });
       });
-
-      $("#shift-list").innerHTML = active.length
-        ? active.map(x=>`<div class="empty" style="margin:6px 0">${x}</div>`).join("")
-        : `<div class="empty">در حال حاضر کسی در شیفت نیست</div>`;
+      $("#shift-list").innerHTML=active.length?active.map(x=>`<div>${x}</div>`).join(""):"<div>در حال حاضر کسی در شیفت نیست</div>";
     }
 
     updateClock(); renderFullSchedule(); renderCurrentShifts();
-    setInterval(updateClock, 1000);
-    setInterval(renderCurrentShifts, 1000);
+    setInterval(updateClock,1000);
+    setInterval(renderCurrentShifts,1000);
   </script>
 </body>
 </html>
-
-
