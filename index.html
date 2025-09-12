@@ -1,4 +1,3 @@
- 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -15,9 +14,7 @@
             color: #fff;
             text-align: center;
             background-color: #333;
-            /* Fallback for older browsers */
             background-image: linear-gradient(135deg, #000 0%, #333 100%);
-            /* Darker gradient */
             overflow-x: hidden;
             min-height: 100vh;
             display: flex;
@@ -26,9 +23,8 @@
             padding: 20px;
             box-sizing: border-box;
             position: relative;
-            /* For the pattern */
         }
-        
+
         body::before {
             content: '';
             position: absolute;
@@ -38,13 +34,11 @@
             height: 100%;
             background-image: linear-gradient(45deg, rgba(255, 204, 0, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(255, 204, 0, 0.1) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255, 204, 0, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(255, 204, 0, 0.1) 75%);
             background-size: 50px 50px;
-            /* Size of the squares */
             background-position: 0 0, 0 50px, 50px -50px, -50px 0px;
-            /* Offset to create the diamond pattern */
             opacity: 0.8;
             z-index: -1;
         }
-        
+
         header {
             width: 100%;
             max-width: 900px;
@@ -54,254 +48,118 @@
             border-bottom: 2px solid #ffcc00;
             position: sticky;
             top: 20px;
-            /* Keep a bit of space from the top */
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             border-radius: 15px;
-            /* Rounded corners for header */
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            z-index: 100;
         }
-        
+
         .title {
             font-size: 2.3rem;
             color: #ffcc00;
             text-shadow: 0 0 15px #000, 0 0 25px #ffcc00;
             margin: 0;
-            /* Remove default margin */
         }
-        
+
         .clock {
             font-size: 2rem;
             font-weight: bold;
             color: #fff200;
             text-shadow: 0 0 15px #000, 0 0 25px #ff8800;
+            margin-top: 10px;
         }
-        
-        .admin-btn {
-            background: #ffcc00;
-            color: #000;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        
-        .admin-btn:hover {
-            background-color: #e6b800;
-            transform: scale(1.05);
-        }
-        
-        .panel,
-        .login-box,
+
         .section {
             width: 100%;
             max-width: 900px;
             background: rgba(34, 34, 34, 0.9);
-            /* Slightly transparent dark background */
             padding: 25px 30px;
             border-radius: 20px;
-            /* More rounded corners */
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
             margin-top: 25px;
-            /* Spacing between sections */
             border: 1px solid #555;
-            /* Subtle border */
         }
-        
-        .panel,
-        .login-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            display: none;
-            /* Hidden by default */
-            border: 2px solid #ffcc00;
-            /* Yellow border for pop-ups */
-        }
-        
-        .panel h3,
-        .login-box h3,
-        .section h2 {
-            color: #ffcc00;
-            font-size: 1.8rem;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
-        }
-        
-        .section {
-            margin-bottom: 25px;
-            /* Extra space at bottom of sections */
-        }
-        
+
         #current-shifts {
             min-height: 150px;
-            /* Ensure some height even if no shifts */
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-        
+
         #shift-list div {
             font-size: 1.2rem;
             padding: 8px 0;
             border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
             display: flex;
             justify-content: center;
-            /* Center the text */
             align-items: center;
         }
-        
+
         #shift-list div:last-child {
             border-bottom: none;
         }
-        
+
         table {
             width: 100%;
             border-collapse: separate;
-            /* Use separate to allow border-radius on cells */
             border-spacing: 0 10px;
-            /* Space between rows */
             margin-top: 20px;
             text-align: right;
-            /* Align text to right for Persian */
         }
-        
+
         th,
         td {
             padding: 12px 15px;
             vertical-align: middle;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         th {
             background-color: rgba(255, 204, 0, 0.8);
-            /* Yellow header background */
             color: #333;
             font-size: 1.1rem;
             font-weight: bold;
             text-align: center;
-            /* Center header text */
             border: none;
             padding: 15px;
         }
-        
+
         th:first-child {
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
         }
-        
+
         th:last-child {
             border-top-left-radius: 10px;
             border-bottom-left-radius: 10px;
         }
-        
+
         td {
             background-color: rgba(51, 51, 51, 0.8);
-            /* Darker cell background */
             font-size: 1rem;
             color: #e0e0e0;
             border: none;
             border-radius: 8px;
-            /* Rounded cells */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
-        
+
         td:first-child {
             text-align: right;
-            /* Name column alignment */
             padding-right: 25px;
         }
-        
+
         td:last-child {
             text-align: left;
-            /* Time column alignment */
             padding-left: 25px;
         }
-        
+
         tr:hover td {
             background-color: rgba(68, 68, 68, 0.8);
-            /* Slightly lighter on hover */
-            cursor: pointer;
         }
-        
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            /* Darker overlay */
-            z-index: 999;
-        }
-        
-        .login-box input,
-        .panel button,
-        .action-box select,
-        .action-box input {
-            padding: 10px 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid #ffcc00;
-            background-color: #333;
-            color: #fff;
-            font-size: 1rem;
-            width: calc(100% - 30px);
-            /* Adjust width */
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-        
-        .login-box input:focus,
-        .action-box input:focus {
-            border-color: #fff200;
-        }
-        
-        .panel button,
-        .login-box button,
-        #actionBox button {
-            background: #ffcc00;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin: 0 10px 10px 0;
-            /* Adjust margin for buttons */
-            width: auto;
-            display: inline-block;
-            /* Allow buttons to sit side-by-side */
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        
-        .panel button:hover,
-        .login-box button:hover,
-        #actionBox button:hover {
-            background-color: #e6b800;
-            transform: scale(1.03);
-        }
-        
-        #actionBox {
-            text-align: center;
-        }
-        
-        #actionBox select {
-            width: calc(100% - 30px);
-        }
-        
+
         .taxi-logo-left,
         .taxi-logo-right {
             position: absolute;
@@ -317,22 +175,21 @@
             font-weight: bold;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             animation: pulse 1.5s infinite alternate;
-            /* Simple pulse animation */
             box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
         }
-        
+
         .taxi-logo-left {
             top: 200px;
             left: 50px;
             transform: rotate(-30deg);
         }
-        
+
         .taxi-logo-right {
             top: 400px;
             right: 50px;
             transform: rotate(30deg);
         }
-        
+
         @keyframes pulse {
             from {
                 transform: scale(1);
@@ -343,8 +200,7 @@
                 opacity: 1;
             }
         }
-        /* Responsive adjustments */
-        
+
         @media (max-width: 768px) {
             .title {
                 font-size: 1.8rem;
@@ -356,11 +212,6 @@
                 flex-direction: column;
                 padding: 10px;
             }
-            .admin-btn {
-                margin-top: 10px;
-            }
-            .panel,
-            .login-box,
             .section {
                 padding: 15px 20px;
             }
@@ -390,31 +241,10 @@
 <body>
     <header>
         <div class="title">سیستم بررسی شیفت‌های تاکسی</div>
-        <div class="clock" id="clock"></div>
-        <button class="admin-btn" onclick="openLogin()">مدیریت</button>
     </header>
 
     <div class="taxi-logo-left">TAXI</div>
     <div class="taxi-logo-right">TAXI</div>
-
-    <div class="overlay" id="overlay"></div>
-
-    <div class="login-box" id="loginBox">
-        <h3>ورود مدیریت</h3>
-        <input type="text" id="username" placeholder="یوزرنیم"><br>
-        <input type="password" id="password" placeholder="پسورد"><br>
-        <button onclick="checkLogin()">ورود</button>
-        <button onclick="closeLogin()">بستن</button>
-    </div>
-
-    <div class="panel" id="adminPanel">
-        <h3>پنل مدیریت</h3>
-        <button onclick="showVacation()">اعمال/لغو مرخصی</button>
-        <button onclick="showChangeTime()">تغییر تایم</button>
-        <button onclick="closePanel()">بستن</button>
-    </div>
-
-    <div id="actionBox" class="panel"></div>
 
     <div class="section" id="current-shifts">
         <h2>شیفت فعلی</h2>
@@ -437,62 +267,14 @@
     </div>
 
     <script>
-        const shifts = [{
-            name: "Danyall Abbasi",
-            rank: "Taxi Director",
-            times: [{
-                days: "همه روزها",
-                start: "20:00",
-                end: "23:00"
-            }],
-            vacation: false
-      
-        }, {
-            name: "Parham Azizi",
-            rank: "Taxi Attendant",
-            times: [{
-                days: "همه روزها",
-                start: "12:00",
-                end: "12:01"
-            }],
-            vacation: false
-        }, {
-            name: "Abbas Abbasi",
-            rank: "Taxi Attendant",
-            times: [{
-                days: "همه روزها",
-                start: "12:00",
-                end: "15:00"
-            }],
-            vacation: false
-        }, {
-            name: "Parsa Rahimi",
-            rank: "Taxi Attendant",
-            times: [{
-                days: "همه روزها",
-                start: "12:00",
-                end: "15:00"
-            }],
-            vacation: false
-        }, {
-            name: "Taha Azizii",
-            rank: "Taxi Attendant",
-            times: [{
-                days: "همه روزها",
-                start: "9:00",
-                end: "12:00"
-            }],
-            vacation: false
-        }, {
-            name: "Arya Khazeie",
-            rank: "Taxi Attendant",
-            times: [{
-                days: "همه روزها",
-                start: "20:30",
-                end: "23:30"
-            }],
-            vacation: false
-        }];
+        const shifts = [
+            { name: "Danyall Abbasi", rank: "Taxi Director", times: [{ days: "همه روزها", start: "20:00", end: "23:00" }], vacation: false },
+            { name: "Parham Azizi", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "12:00", end: "12:01" }], vacation: false },
+            { name: "Abbas Abbasi", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "12:00", end: "15:00" }], vacation: false },
+            { name: "Parsa Rahimi", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "12:00", end: "15:00" }], vacation: false },
+            { name: "Taha Azizii", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "9:00", end: "12:00" }], vacation: false },
+            { name: "Arya Khazeie", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "20:30", end: "23:30" }], vacation: false }
+        ];
 
         const rankOrder = {
             "Taxi Director": 1,
@@ -501,34 +283,34 @@
             "Taxi Attendant": 4
         };
 
-        function $(s) {
-            return document.querySelector(s);
-        }
+        function $(s) { return document.querySelector(s); }
 
-        function toPersianDigits(str) {
-            return String(str).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹" [d]);
-        }
+        function toPersianDigits(str) { return String(str).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]); }
 
-        function timeToMins(t) {
-            const [h, m] = t.split(":").map(Number);
-            return h * 60 + m;
-        }
+        function timeToMins(t) { const [h, m] = t.split(":").map(Number); return h * 60 + m; }
 
         function updateClock() {
             const now = new Date();
-            $("#clock").textContent = `${toPersianDigits(String(now.getHours()).padStart(2,"0"))}:${toPersianDigits(String(now.getMinutes()).padStart(2,"0"))}:${toPersianDigits(String(now.getSeconds()).padStart(2,"0"))}`;
+            const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+            if (!$("#clock")) {
+                const clockEl = document.createElement("div");
+                clockEl.id = "clock";
+                clockEl.className = "clock";
+                document.querySelector("header").appendChild(clockEl);
+            }
+            $("#clock").textContent = toPersianDigits(timeStr);
         }
 
         function renderFullSchedule() {
             const tbody = $("#full-schedule tbody");
             tbody.innerHTML = shifts.slice().sort((a, b) => (rankOrder[a.rank] || 99) - (rankOrder[b.rank] || 99))
                 .map(p => p.times.map(t => `
-      <tr>
-        <td>${p.name}${p.vacation?" (مرخصی)":""}</td>
-        <td>${p.rank}</td>
-        <td>${t.days}</td>
-        <td>${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}</td>
-      </tr>`).join(""))
+                    <tr>
+                        <td>${p.name}${p.vacation?" (مرخصی)":""}</td>
+                        <td>${p.rank}</td>
+                        <td>${t.days}</td>
+                        <td>${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}</td>
+                    </tr>`).join(""))
                 .join("");
         }
 
@@ -539,26 +321,17 @@
             shifts.forEach(p => {
                 if (p.vacation) return;
                 p.times.forEach(t => {
-                    const start = timeToMins(t.start),
-                        end = timeToMins(t.end);
-                    // Handle shifts that cross midnight
-                    if (start < end) { // Normal shift
+                    const start = timeToMins(t.start), end = timeToMins(t.end);
+                    if (start < end) {
                         if (curMins >= start && curMins < end) {
                             const remain = end - curMins;
-                            const rh = Math.floor(remain / 60),
-                                rm = remain % 60;
+                            const rh = Math.floor(remain / 60), rm = remain % 60;
                             active.push(`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`);
                         }
-                    } else { // Shift crosses midnight (e.g., 20:00 to 03:00)
+                    } else {
                         if (curMins >= start || curMins < end) {
-                            let remain;
-                            if (curMins >= start) { // Time before midnight
-                                remain = (24 * 60 - curMins) + end;
-                            } else { // Time after midnight
-                                remain = end - curMins;
-                            }
-                            const rh = Math.floor(remain / 60),
-                                rm = remain % 60;
+                            let remain = curMins >= start ? (24*60 - curMins)+end : end - curMins;
+                            const rh = Math.floor(remain / 60), rm = remain % 60;
                             active.push(`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`);
                         }
                     }
@@ -567,105 +340,6 @@
             $("#shift-list").innerHTML = active.length ? active.map(x => `<div>${x}</div>`).join("") : "<div>در حال حاضر کسی در شیفت نیست</div>";
         }
 
-        function openLogin() {
-            $("#overlay").style.display = "block";
-            $("#loginBox").style.display = "block";
-        }
-
-        function closeLogin() {
-            $("#overlay").style.display = "none";
-            $("#loginBox").style.display = "none";
-        }
-
-        function checkLogin() {
-            const u = $("#username").value,
-                p = $("#password").value;
-            if (u === "Vigilante" && p === "021kid88") {
-                closeLogin();
-                openPanel();
-            } else {
-                alert("نام کاربری یا رمز عبور اشتباه است!"); // More specific error
-            }
-        }
-
-        function openPanel() {
-            $("#overlay").style.display = "block";
-            $("#adminPanel").style.display = "block";
-        }
-
-        function closePanel() {
-            $("#overlay").style.display = "none";
-            $("#adminPanel").style.display = "none";
-            $("#actionBox").style.display = "none";
-        }
-
-        function showVacation() {
-            let html = "<h3>اعمال/لغو مرخصی</h3><select id='vacSel'>";
-            shifts.forEach((p, i) => {
-                html += `<option value='${i}'>${p.name} ${p.vacation ? '(در مرخصی)' : ''}</option>` // Show current vacation status
-            });
-            html += "</select><br><br><button onclick='toggleVacation()'>تایید</button><button onclick='closeAction()'>بستن</button>";
-            $("#actionBox").innerHTML = html;
-            $("#adminPanel").style.display = "none";
-            $("#actionBox").style.display = "block";
-        }
-
-        function toggleVacation() {
-            const i = document.getElementById("vacSel").value;
-            shifts[i].vacation = !shifts[i].vacation;
-            renderFullSchedule();
-            renderCurrentShifts();
-            closeAction();
-        }
-
-        function showChangeTime() {
-            let html = "<h3>تغییر تایم</h3><select id='timeSel'>";
-            shifts.forEach((p, i) => {
-                html += `<option value='${i}'>${p.name}</option>`
-            });
-            html += "</select><br><br>شروع (مثال: 08:00):<input id='newStart' placeholder='HH:MM'><br>پایان (مثال: 17:00):<input id='newEnd' placeholder='HH:MM'><br><br><button onclick='changeTime()'>تایید</button><button onclick='closeAction()'>بستن</button>";
-            $("#actionBox").innerHTML = html;
-            $("#adminPanel").style.display = "none";
-            $("#actionBox").style.display = "block";
-        }
-
-        function changeTime() {
-            const i = document.getElementById("timeSel").value;
-            const ns = document.getElementById("newStart").value;
-            const ne = document.getElementById("newEnd").value.trim(); // Trim whitespace
-
-            // Basic time format validation (HH:MM)
-            const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
-
-            if (!timeRegex.test(ns) || !timeRegex.test(ne)) {
-                alert("فرمت ساعت صحیح نیست. لطفا از فرمت HH:MM استفاده کنید (مثال: ۰۸:۰۰).");
-                return; // Stop execution if format is wrong
-            }
-
-            // Update only the first shift time for simplicity
-            if (shifts[i].times.length > 0) {
-                shifts[i].times[0].start = ns;
-                shifts[i].times[0].end = ne;
-            } else {
-                // If for some reason there are no existing times, add one
-                shifts[i].times.push({
-                    days: "همه روزها",
-                    start: ns,
-                    end: ne
-                });
-            }
-
-            renderFullSchedule();
-            renderCurrentShifts();
-            closeAction();
-        }
-
-        function closeAction() {
-            $("#actionBox").style.display = "none";
-            openPanel();
-        }
-
-        // Initial calls and intervals
         updateClock();
         renderFullSchedule();
         renderCurrentShifts();
@@ -673,6 +347,4 @@
         setInterval(renderCurrentShifts, 1000);
     </script>
 </body>
-
-</html>کیرمت تو سطح برنامه نویسیت این کد منه براش یه یوزرپسورد گذاشتی همه با f12 میتونن ببیننش کیری تخم سگ درستش کن هاید بشه براشون
-
+</html>
