@@ -1,247 +1,678 @@
+ 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>سیستم بررسی شیفت‌های تاکسی</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  /* بازگشت کامل به طراحی زرد/مشکی اولیه */
-  :root{--yellow:#ffcc00;--black:#0a0a0a;--panel:rgba(0,0,0,0.65)}
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:"Vazirmatn",sans-serif;background:linear-gradient(135deg,#ffcc00 0%, #000 100%);color:#fff;overflow-x:hidden}
-  /* چکربرد پس‌زمینه */
-  body::before{
-    content:"";position:fixed;inset:0;
-    background-image:
-      linear-gradient(45deg, rgba(0,0,0,0.25) 25%, transparent 25%),
-      linear-gradient(-45deg, rgba(0,0,0,0.25) 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.25) 75%),
-      linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.25) 75%);
-    background-size:40px 40px;z-index:0;pointer-events:none;opacity:0.9;
-  }
-
-  /* توپ‌ها */
-  #balls-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
-  .ball{position:absolute;border-radius:50%;width:90px;height:90px;background:radial-gradient(circle at center,#fff200,#ff8800);display:flex;align-items:center;justify-content:center;color:#000;font-weight:900;font-size:18px;animation:float 9s linear infinite;text-shadow:0 0 6px #fff}
-  .ball:nth-child(1){top:8%;left:10%;animation-duration:6s}
-  .ball:nth-child(2){top:45%;left:65%;animation-duration:9s}
-  .ball:nth-child(3){top:28%;left:82%;animation-duration:11s}
-  .ball:nth-child(4){top:72%;left:32%;animation-duration:13s}
-  @keyframes float{0%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-40px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
-
-  /* هدر */
-  header{position:sticky;top:0;z-index:2;background:rgba(0,0,0,0.6);backdrop-filter:blur(2px);margin:14px auto;padding:14px;border-radius:8px;border-bottom:2px solid rgba(0,0,0,0.25);max-width:1100px;display:flex;align-items:center;justify-content:space-between}
-  .title{font-size:2.2rem;color:var(--yellow);font-weight:700;text-shadow:0 0 12px #000}
-  .clock{font-size:1.6rem;color:#fff200;font-weight:800}
-  .admin-btn{background:var(--yellow);border:none;color:#000;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
-
-  main{max-width:1100px;margin:22px auto;padding:10px;position:relative;z-index:1}
-  .section{background:var(--panel);padding:18px;border-radius:14px;margin-bottom:18px;border:2px solid rgba(0,0,0,0.35)}
-  .section h2{color:var(--yellow);text-shadow:0 0 8px rgba(0,0,0,0.4);margin-top:0;margin-bottom:10px;text-align:center}
-
-  #current-shifts{min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  #shift-list div{padding:8px 0;font-size:1.05rem;color:#f4f4f4}
-
-  table{width:100%;border-collapse:separate;border-spacing:0 10px;margin-top:12px;direction:rtl}
-  thead th{background:linear-gradient(135deg,var(--yellow),#c68f00);color:#000;padding:14px;border-radius:8px}
-  tbody td{background:rgba(255,255,255,0.03);padding:12px;border-radius:8px}
-  tbody tr:hover td{background:rgba(255,204,0,0.06);cursor:default}
-  .status-active{color:#b2ff59}.status-vac{color:#ff8a80}
-
-  /* پنل‌های پاپ‌آپ */
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000}
-  .panel{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#121212;padding:18px;border-radius:12px;z-index:1001;border:2px solid rgba(255,204,0,0.12);min-width:340px}
-  .panel h3{color:var(--yellow);margin:0 0 10px}
-  .panel input,.panel select{width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid rgba(255,204,0,0.08);background:#0f0f0f;color:#fff}
-  .panel button{background:var(--yellow);color:#000;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700;margin-right:8px}
-
-  @media (max-width:720px){
-    .title{font-size:1.3rem}.clock{font-size:1rem}
-    .ball{width:64px;height:64px;font-size:14px}
-    .panel{min-width:260px}
-  }
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم بررسی شیفت‌های تاکسی</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚕</text></svg>">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap");
+        body {
+            margin: 0;
+            font-family: "Vazirmatn", sans-serif;
+            color: #fff;
+            text-align: center;
+            background-color: #333;
+            /* Fallback for older browsers */
+            background-image: linear-gradient(135deg, #000 0%, #333 100%);
+            /* Darker gradient */
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            /* For the pattern */
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(45deg, rgba(255, 204, 0, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(255, 204, 0, 0.1) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255, 204, 0, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(255, 204, 0, 0.1) 75%);
+            background-size: 50px 50px;
+            /* Size of the squares */
+            background-position: 0 0, 0 50px, 50px -50px, -50px 0px;
+            /* Offset to create the diamond pattern */
+            opacity: 0.8;
+            z-index: -1;
+        }
+        
+        header {
+            width: 100%;
+            max-width: 900px;
+            padding: 15px 20px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.7);
+            border-bottom: 2px solid #ffcc00;
+            position: sticky;
+            top: 20px;
+            /* Keep a bit of space from the top */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px;
+            /* Rounded corners for header */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+        
+        .title {
+            font-size: 2.3rem;
+            color: #ffcc00;
+            text-shadow: 0 0 15px #000, 0 0 25px #ffcc00;
+            margin: 0;
+            /* Remove default margin */
+        }
+        
+        .clock {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff200;
+            text-shadow: 0 0 15px #000, 0 0 25px #ff8800;
+        }
+        
+        .admin-btn {
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .admin-btn:hover {
+            background-color: #e6b800;
+            transform: scale(1.05);
+        }
+        
+        .panel,
+        .login-box,
+        .section {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(34, 34, 34, 0.9);
+            /* Slightly transparent dark background */
+            padding: 25px 30px;
+            border-radius: 20px;
+            /* More rounded corners */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            margin-top: 25px;
+            /* Spacing between sections */
+            border: 1px solid #555;
+            /* Subtle border */
+        }
+        
+        .panel,
+        .login-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            display: none;
+            /* Hidden by default */
+            border: 2px solid #ffcc00;
+            /* Yellow border for pop-ups */
+        }
+        
+        .panel h3,
+        .login-box h3,
+        .section h2 {
+            color: #ffcc00;
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            /* Extra space at bottom of sections */
+        }
+        
+        #current-shifts {
+            min-height: 150px;
+            /* Ensure some height even if no shifts */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        #shift-list div {
+            font-size: 1.2rem;
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            /* Center the text */
+            align-items: center;
+        }
+        
+        #shift-list div:last-child {
+            border-bottom: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            /* Use separate to allow border-radius on cells */
+            border-spacing: 0 10px;
+            /* Space between rows */
+            margin-top: 20px;
+            text-align: right;
+            /* Align text to right for Persian */
+        }
+        
+        th,
+        td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th {
+            background-color: rgba(255, 204, 0, 0.8);
+            /* Yellow header background */
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            /* Center header text */
+            border: none;
+            padding: 15px;
+        }
+        
+        th:first-child {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        
+        th:last-child {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+        
+        td {
+            background-color: rgba(51, 51, 51, 0.8);
+            /* Darker cell background */
+            font-size: 1rem;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            /* Rounded cells */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        td:first-child {
+            text-align: right;
+            /* Name column alignment */
+            padding-right: 25px;
+        }
+        
+        td:last-child {
+            text-align: left;
+            /* Time column alignment */
+            padding-left: 25px;
+        }
+        
+        tr:hover td {
+            background-color: rgba(68, 68, 68, 0.8);
+            /* Slightly lighter on hover */
+            cursor: pointer;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            /* Darker overlay */
+            z-index: 999;
+        }
+        
+        .login-box input,
+        .panel button,
+        .action-box select,
+        .action-box input {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffcc00;
+            background-color: #333;
+            color: #fff;
+            font-size: 1rem;
+            width: calc(100% - 30px);
+            /* Adjust width */
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .login-box input:focus,
+        .action-box input:focus {
+            border-color: #fff200;
+        }
+        
+        .panel button,
+        .login-box button,
+        #actionBox button {
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 0 10px 10px 0;
+            /* Adjust margin for buttons */
+            width: auto;
+            display: inline-block;
+            /* Allow buttons to sit side-by-side */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .panel button:hover,
+        .login-box button:hover,
+        #actionBox button:hover {
+            background-color: #e6b800;
+            transform: scale(1.03);
+        }
+        
+        #actionBox {
+            text-align: center;
+        }
+        
+        #actionBox select {
+            width: calc(100% - 30px);
+        }
+        
+        .taxi-logo-left,
+        .taxi-logo-right {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #ffcc00;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: #000;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            animation: pulse 1.5s infinite alternate;
+            /* Simple pulse animation */
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+        }
+        
+        .taxi-logo-left {
+            top: 200px;
+            left: 50px;
+            transform: rotate(-30deg);
+        }
+        
+        .taxi-logo-right {
+            top: 400px;
+            right: 50px;
+            transform: rotate(30deg);
+        }
+        
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+            to {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+        }
+        /* Responsive adjustments */
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 1.8rem;
+            }
+            .clock {
+                font-size: 1.5rem;
+            }
+            header {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .admin-btn {
+                margin-top: 10px;
+            }
+            .panel,
+            .login-box,
+            .section {
+                padding: 15px 20px;
+            }
+            th,
+            td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+            .taxi-logo-left,
+            .taxi-logo-right {
+                width: 80px;
+                height: 80px;
+                font-size: 1.5em;
+            }
+            .taxi-logo-left {
+                top: 150px;
+                left: 20px;
+            }
+            .taxi-logo-right {
+                top: 300px;
+                right: 20px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <!-- پس‌زمینه توپ‌ها -->
-  <div id="balls-bg">
-    <div class="ball">TAXI</div>
-    <div class="ball">TAXI</div>
-    <div class="ball">TAXI</div>
-    <div class="ball">TAXI</div>
-  </div>
+    <header>
+        <div class="title">سیستم بررسی شیفت‌های تاکسی</div>
+        <div class="clock" id="clock"></div>
+        <button class="admin-btn" onclick="openLogin()">مدیریت</button>
+    </header>
 
-  <header>
-    <div class="title">سیستم بررسی شیفت‌های تاکسی</div>
-    <div class="clock" id="clock">--:--:--</div>
-    <button class="admin-btn" onclick="openLogin()">مدیریت</button>
-  </header>
+    <div class="taxi-logo-left">TAXI</div>
+    <div class="taxi-logo-right">TAXI</div>
 
-  <main>
-    <section class="section" id="current-shifts">
-      <h2>شیفت فعلی</h2>
-      <div id="shift-list">در حال بررسی...</div>
-    </section>
+    <div class="overlay" id="overlay"></div>
 
-    <section class="section">
-      <h2>جدول کامل شیفت‌ها</h2>
-      <table id="full-schedule" aria-live="polite">
-        <thead>
-          <tr><th>نام</th><th>رنک</th><th>ساعت</th><th>وضعیت</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
-  </main>
-
-  <!-- overlay و پنل‌ها -->
-  <div class="overlay" id="overlay"></div>
-
-  <div class="panel" id="loginBox" aria-hidden="true">
-    <h3>ورود مدیریت</h3>
-    <input id="username" placeholder="یوزرنیم" autocomplete="username">
-    <input id="password" placeholder="پسورد" type="password" autocomplete="current-password">
-    <div style="text-align:left">
-      <button onclick="doLogin()">ورود</button>
-      <button onclick="closeLogin()" style="background:#666;color:#fff">بستن</button>
+    <div class="login-box" id="loginBox">
+        <h3>ورود مدیریت</h3>
+        <input type="text" id="username" placeholder="یوزرنیم"><br>
+        <input type="password" id="password" placeholder="پسورد"><br>
+        <button onclick="checkLogin()">ورود</button>
+        <button onclick="closeLogin()">بستن</button>
     </div>
-  </div>
 
-  <div class="panel" id="adminPanel" aria-hidden="true">
-    <h3>پنل مدیریت</h3>
-    <select id="sel" style="margin-bottom:8px"></select>
-    <div style="display:flex;gap:8px;margin-bottom:8px">
-      <button onclick="toggleVacation()">اعمال/لغو مرخصی</button>
-      <button onclick="openChange()">تغییر تایم</button>
+    <div class="panel" id="adminPanel">
+        <h3>پنل مدیریت</h3>
+        <button onclick="showVacation()">اعمال/لغو مرخصی</button>
+        <button onclick="showChangeTime()">تغییر تایم</button>
+        <button onclick="closePanel()">بستن</button>
     </div>
-    <div style="text-align:left">
-      <button onclick="doLogout()" style="background:#c0392b;color:#fff">خروج</button>
+
+    <div id="actionBox" class="panel"></div>
+
+    <div class="section" id="current-shifts">
+        <h2>شیفت فعلی</h2>
+        <div id="shift-list"></div>
     </div>
-  </div>
 
-  <div class="panel" id="changePanel" aria-hidden="true">
-    <h3>تغییر تایم</h3>
-    <select id="timeSel" style="margin-bottom:8px"></select>
-    <input id="newStart" placeholder="شروع (مثال: 20:00)">
-    <input id="newEnd" placeholder="پایان (مثال: 23:00)">
-    <div style="text-align:left;margin-top:8px">
-      <button onclick="changeTime()">تایید</button>
-      <button onclick="closeChange()" style="background:#666;color:#fff">بستن</button>
+    <div class="section">
+        <h2>جدول کامل شیفت‌ها</h2>
+        <table id="full-schedule">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>رنک</th>
+                    <th>روز / حالت</th>
+                    <th>ساعت</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
-  </div>
 
-<script>
-/* داده محلی (مثل فایل اولیه خودت) */
-let shifts = [
-  { id:1, name:"Danyall Abbasi", rank:"Taxi Director", times:[{start:"20:00", end:"23:00"}], vacation:false },
-  { id:2, name:"Kourosh Zabeti", rank:"Taxi Deputy Director", times:[{start:"14:00", end:"17:00"}], vacation:false },
-  { id:3, name:"Parham Azizi", rank:"Taxi Attendant", times:[{start:"12:00", end:"12:01"}], vacation:false },
-  { id:4, name:"Abbas Abbasi", rank:"Taxi Attendant", times:[{start:"12:00", end:"15:00"}], vacation:false },
-  { id:5, name:"Parsa Rahimi", rank:"Taxi Attendant", times:[{start:"12:00", end:"15:00"}], vacation:false },
-  { id:6, name:"Taha Azizii", rank:"Taxi Attendant", times:[{start:"09:00", end:"12:00"}], vacation:false },
-  { id:7, name:"Arya Khazeie", rank:"Taxi Attendant", times:[{start:"20:30", end:"23:30"}], vacation:false }
-];
+    <script>
+        const shifts = [{
+            name: "Danyall Abbasi",
+            rank: "Taxi Director",
+            times: [{
+                days: "همه روزها",
+                start: "20:00",
+                end: "23:00"
+            }],
+            vacation: false
+      
+        }, {
+            name: "Parham Azizi",
+            rank: "Taxi Attendant",
+            times: [{
+                days: "همه روزها",
+                start: "12:00",
+                end: "12:01"
+            }],
+            vacation: false
+        }, {
+            name: "Abbas Abbasi",
+            rank: "Taxi Attendant",
+            times: [{
+                days: "همه روزها",
+                start: "12:00",
+                end: "15:00"
+            }],
+            vacation: false
+        }, {
+            name: "Parsa Rahimi",
+            rank: "Taxi Attendant",
+            times: [{
+                days: "همه روزها",
+                start: "12:00",
+                end: "15:00"
+            }],
+            vacation: false
+        }, {
+            name: "Taha Azizii",
+            rank: "Taxi Attendant",
+            times: [{
+                days: "همه روزها",
+                start: "9:00",
+                end: "12:00"
+            }],
+            vacation: false
+        }, {
+            name: "Arya Khazeie",
+            rank: "Taxi Attendant",
+            times: [{
+                days: "همه روزها",
+                start: "20:30",
+                end: "23:30"
+            }],
+            vacation: false
+        }];
 
-const $ = s => document.querySelector(s);
-function toPersianDigits(str){ return String(str).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]); }
+        const rankOrder = {
+            "Taxi Director": 1,
+            "Taxi Deputy Director": 0,
+            "Taxi Manager": 3,
+            "Taxi Attendant": 4
+        };
 
-/* ساعت */
-function updateClock(){
-  const now = new Date();
-  $("#clock").textContent = `${toPersianDigits(String(now.getHours()).padStart(2,"0"))}:${toPersianDigits(String(now.getMinutes()).padStart(2,"0"))}:${toPersianDigits(String(now.getSeconds()).padStart(2,"0"))}`;
-}
+        function $(s) {
+            return document.querySelector(s);
+        }
 
-/* رندر جدول کامل */
-function renderFullSchedule(){
-  const tbody = $("#full-schedule tbody");
-  tbody.innerHTML = shifts.map(s => {
-    const t = s.times[0];
-    return `<tr>
-      <td style="text-align:right;padding-right:20px">${s.name}${s.vacation? ' <span style="color:#ff8a80">(مرخصی)</span>':''}</td>
-      <td>${s.rank}</td>
-      <td>${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}</td>
-      <td class="${s.vacation? 'status-vac':'status-active'}">${s.vacation? 'مرخصی':'فعال'}</td>
-    </tr>`;
-  }).join("");
-}
+        function toPersianDigits(str) {
+            return String(str).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹" [d]);
+        }
 
-/* رندر شیفت جاری */
-function renderCurrentShifts(){
-  const now = new Date();
-  const curMins = now.getHours()*60 + now.getMinutes();
-  const active = [];
-  for(const p of shifts){
-    if(p.vacation) continue;
-    for(const t of p.times){
-      const [sh,sm] = t.start.split(":").map(Number);
-      const [eh,em] = t.end.split(":").map(Number);
-      const sM = sh*60 + sm, eM = eh*60 + em;
-      let inShift=false;
-      if(sM <= eM) inShift = (curMins >= sM && curMins < eM);
-      else inShift = (curMins >= sM || curMins < eM); // cross-midnight
-      if(inShift){
-        const remain = (eM>curMins? eM-curMins : (24*60-curMins)+eM);
-        const rh = Math.floor(remain/60), rm = remain%60;
-        active.push(`${p.name} (${p.rank}) — ${rh>0? toPersianDigits(rh)+" ساعت و " : "" }${toPersianDigits(rm)} دقیقه مانده`);
-      }
-    }
-  }
-  $("#shift-list").innerHTML = active.length ? active.map(a=>`<div>${a}</div>`).join("") : "<div>در حال حاضر کسی در شیفت نیست</div>";
-}
+        function timeToMins(t) {
+            const [h, m] = t.split(":").map(Number);
+            return h * 60 + m;
+        }
 
-/* پنل‌ها */
-function openLogin(){ $("#overlay").style.display="block"; $("#loginBox").style.display="block"; }
-function closeLogin(){ $("#overlay").style.display="none"; $("#loginBox").style.display="none"; }
-function openPanel(){ $("#overlay").style.display="block"; $("#adminPanel").style.display="block"; fillSelect(); }
-function closePanel(){ $("#overlay").style.display="none"; $("#adminPanel").style.display="none"; $("#changePanel").style.display="none"; }
-function openChange(){ $("#changePanel").style.display="block"; fillTimeSelect(); }
-function closeChange(){ $("#changePanel").style.display="none"; }
+        function updateClock() {
+            const now = new Date();
+            $("#clock").textContent = `${toPersianDigits(String(now.getHours()).padStart(2,"0"))}:${toPersianDigits(String(now.getMinutes()).padStart(2,"0"))}:${toPersianDigits(String(now.getSeconds()).padStart(2,"0"))}`;
+        }
 
-/* مدیریت client-side ساده */
-function fillSelect(){ $("#sel").innerHTML = shifts.map(s=>`<option value="${s.id}">${s.name}${s.vacation? ' (مرخصی)':''}</option>`).join(''); }
-function fillTimeSelect(){ $("#timeSel").innerHTML = shifts.map(s=>`<option value="${s.id}">${s.name}</option>`).join(''); }
-function toggleVacation(){ const id=Number($("#sel").value); const p=shifts.find(x=>x.id===id); if(p){ p.vacation=!p.vacation; renderFullSchedule(); renderCurrentShifts(); fillSelect(); } }
-function changeTime(){ const id=Number($("#timeSel").value); const ns=$("#newStart").value.trim(); const ne=$("#newEnd").value.trim(); const re=/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/; if(!re.test(ns)||!re.test(ne)){ alert("فرمت ساعت صحیح نیست (HH:MM)"); return;} const p=shifts.find(x=>x.id===id); if(p){ p.times[0].start=ns; p.times[0].end=ne; renderFullSchedule(); renderCurrentShifts(); closeChange(); } }
-function doLogout(){ closePanel(); }
+        function renderFullSchedule() {
+            const tbody = $("#full-schedule tbody");
+            tbody.innerHTML = shifts.slice().sort((a, b) => (rankOrder[a.rank] || 99) - (rankOrder[b.rank] || 99))
+                .map(p => p.times.map(t => `
+      <tr>
+        <td>${p.name}${p.vacation?" (مرخصی)":""}</td>
+        <td>${p.rank}</td>
+        <td>${t.days}</td>
+        <td>${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}</td>
+      </tr>`).join(""))
+                .join("");
+        }
 
-/* --------- لاگین (خفه‌شده در کلاینت) ---------- 
-   تاکید: روش امن سروری نیست. اینجا برای جلوگیری از دیدن ساده یوزر/پسورد در view-source انجام شده.
-   اگر بعداً خواستی، همینو با JWT و httpOnly cookie روی سرور جایگزین کنیم.
-*/
-const storedUser = "Vigilante";
-// هش salt+pass (SHA-256) به صورت چندتکه ذخیره شده تا توی سورس یک‌خطی دیده نشه.
-// salt هم به base64 نگه داشته شده.
-const _saltB64 = "c29tZXNhbHQxMjM0NQ=="; // "somesalt12345"
-const _hashParts = ["2af4789b05f9","356480bdbd72","4cd0e49d52b8","f7aa8581b373868b200a6b7cd952"];
-function getStoredHash(){ return _hashParts.join(""); }
-async function sha256hex(text){
-  const enc = new TextEncoder();
-  const data = enc.encode(text);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-  const bytes = new Uint8Array(hash);
-  return Array.from(bytes).map(b=>b.toString(16).padStart(2,"0")).join("");
-}
+        function renderCurrentShifts() {
+            const now = new Date();
+            const curMins = now.getHours() * 60 + now.getMinutes();
+            const active = [];
+            shifts.forEach(p => {
+                if (p.vacation) return;
+                p.times.forEach(t => {
+                    const start = timeToMins(t.start),
+                        end = timeToMins(t.end);
+                    // Handle shifts that cross midnight
+                    if (start < end) { // Normal shift
+                        if (curMins >= start && curMins < end) {
+                            const remain = end - curMins;
+                            const rh = Math.floor(remain / 60),
+                                rm = remain % 60;
+                            active.push(`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`);
+                        }
+                    } else { // Shift crosses midnight (e.g., 20:00 to 03:00)
+                        if (curMins >= start || curMins < end) {
+                            let remain;
+                            if (curMins >= start) { // Time before midnight
+                                remain = (24 * 60 - curMins) + end;
+                            } else { // Time after midnight
+                                remain = end - curMins;
+                            }
+                            const rh = Math.floor(remain / 60),
+                                rm = remain % 60;
+                            active.push(`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`);
+                        }
+                    }
+                });
+            });
+            $("#shift-list").innerHTML = active.length ? active.map(x => `<div>${x}</div>`).join("") : "<div>در حال حاضر کسی در شیفت نیست</div>";
+        }
 
-async function doLogin(){
-  const u = $("#username").value.trim(), p = $("#password").value;
-  if(!u || !p){ alert("یوزرنیم و پسورد را وارد کنید"); return; }
-  if(u !== storedUser){ alert("نام کاربری یا رمز اشتباه است"); return; }
-  const salt = atob(_saltB64);
-  const candidate = await sha256hex(salt + p);
-  if(candidate === getStoredHash()){
-    // موفق
-    $("#username").value = ""; $("#password").value = "";
-    closeLogin(); openPanel();
-  } else {
-    alert("نام کاربری یا رمز اشتباه است");
-    $("#password").value="";
-  }
-}
+        function openLogin() {
+            $("#overlay").style.display = "block";
+            $("#loginBox").style.display = "block";
+        }
 
-/* init */
-updateClock(); setInterval(updateClock,1000);
-renderFullSchedule(); renderCurrentShifts(); setInterval(renderCurrentShifts,1000);
-</script>
+        function closeLogin() {
+            $("#overlay").style.display = "none";
+            $("#loginBox").style.display = "none";
+        }
+
+        function checkLogin() {
+            const u = $("#username").value,
+                p = $("#password").value;
+            if (u === "Vigilante" && p === "021kid88") {
+                closeLogin();
+                openPanel();
+            } else {
+                alert("نام کاربری یا رمز عبور اشتباه است!"); // More specific error
+            }
+        }
+
+        function openPanel() {
+            $("#overlay").style.display = "block";
+            $("#adminPanel").style.display = "block";
+        }
+
+        function closePanel() {
+            $("#overlay").style.display = "none";
+            $("#adminPanel").style.display = "none";
+            $("#actionBox").style.display = "none";
+        }
+
+        function showVacation() {
+            let html = "<h3>اعمال/لغو مرخصی</h3><select id='vacSel'>";
+            shifts.forEach((p, i) => {
+                html += `<option value='${i}'>${p.name} ${p.vacation ? '(در مرخصی)' : ''}</option>` // Show current vacation status
+            });
+            html += "</select><br><br><button onclick='toggleVacation()'>تایید</button><button onclick='closeAction()'>بستن</button>";
+            $("#actionBox").innerHTML = html;
+            $("#adminPanel").style.display = "none";
+            $("#actionBox").style.display = "block";
+        }
+
+        function toggleVacation() {
+            const i = document.getElementById("vacSel").value;
+            shifts[i].vacation = !shifts[i].vacation;
+            renderFullSchedule();
+            renderCurrentShifts();
+            closeAction();
+        }
+
+        function showChangeTime() {
+            let html = "<h3>تغییر تایم</h3><select id='timeSel'>";
+            shifts.forEach((p, i) => {
+                html += `<option value='${i}'>${p.name}</option>`
+            });
+            html += "</select><br><br>شروع (مثال: 08:00):<input id='newStart' placeholder='HH:MM'><br>پایان (مثال: 17:00):<input id='newEnd' placeholder='HH:MM'><br><br><button onclick='changeTime()'>تایید</button><button onclick='closeAction()'>بستن</button>";
+            $("#actionBox").innerHTML = html;
+            $("#adminPanel").style.display = "none";
+            $("#actionBox").style.display = "block";
+        }
+
+        function changeTime() {
+            const i = document.getElementById("timeSel").value;
+            const ns = document.getElementById("newStart").value;
+            const ne = document.getElementById("newEnd").value.trim(); // Trim whitespace
+
+            // Basic time format validation (HH:MM)
+            const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+
+            if (!timeRegex.test(ns) || !timeRegex.test(ne)) {
+                alert("فرمت ساعت صحیح نیست. لطفا از فرمت HH:MM استفاده کنید (مثال: ۰۸:۰۰).");
+                return; // Stop execution if format is wrong
+            }
+
+            // Update only the first shift time for simplicity
+            if (shifts[i].times.length > 0) {
+                shifts[i].times[0].start = ns;
+                shifts[i].times[0].end = ne;
+            } else {
+                // If for some reason there are no existing times, add one
+                shifts[i].times.push({
+                    days: "همه روزها",
+                    start: ns,
+                    end: ne
+                });
+            }
+
+            renderFullSchedule();
+            renderCurrentShifts();
+            closeAction();
+        }
+
+        function closeAction() {
+            $("#actionBox").style.display = "none";
+            openPanel();
+        }
+
+        // Initial calls and intervals
+        updateClock();
+        renderFullSchedule();
+        renderCurrentShifts();
+        setInterval(updateClock, 1000);
+        setInterval(renderCurrentShifts, 1000);
+    </script>
 </body>
-</html>
+
+</html>کیرمت تو سطح برنامه نویسیت این کد منه براش یه یوزرپسورد گذاشتی همه با f12 میتونن ببیننش کیری تخم سگ درستش کن هاید بشه براشون
+
