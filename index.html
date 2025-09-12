@@ -1,90 +1,220 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>سیستم بررسی شیفت‌های تاکسی</title>
-  <style>
-    body{background:#111;color:#fff;font-family:Vazirmatn, sans-serif;padding:20px}
-    .admin-btn{position:fixed;top:20px;right:20px;background:#ffcc00;color:#000;padding:10px;border-radius:8px;border:none;cursor:pointer}
-    .panel{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#222;padding:20px;border-radius:12px;border:2px solid #ffcc00;z-index:9999}
-    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9998}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border-bottom:1px solid #333;text-align:center}
-    .hidden{display:none !important}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>سیستم بررسی شیفت‌های تاکسی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* بازگشت کامل به طراحی زرد/مشکی اولیه */
+  :root{--yellow:#ffcc00;--black:#0a0a0a;--panel:rgba(0,0,0,0.65)}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:"Vazirmatn",sans-serif;background:linear-gradient(135deg,#ffcc00 0%, #000 100%);color:#fff;overflow-x:hidden}
+  /* چکربرد پس‌زمینه */
+  body::before{
+    content:"";position:fixed;inset:0;
+    background-image:
+      linear-gradient(45deg, rgba(0,0,0,0.25) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(0,0,0,0.25) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.25) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.25) 75%);
+    background-size:40px 40px;z-index:0;pointer-events:none;opacity:0.9;
+  }
+
+  /* توپ‌ها */
+  #balls-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .ball{position:absolute;border-radius:50%;width:90px;height:90px;background:radial-gradient(circle at center,#fff200,#ff8800);display:flex;align-items:center;justify-content:center;color:#000;font-weight:900;font-size:18px;animation:float 9s linear infinite;text-shadow:0 0 6px #fff}
+  .ball:nth-child(1){top:8%;left:10%;animation-duration:6s}
+  .ball:nth-child(2){top:45%;left:65%;animation-duration:9s}
+  .ball:nth-child(3){top:28%;left:82%;animation-duration:11s}
+  .ball:nth-child(4){top:72%;left:32%;animation-duration:13s}
+  @keyframes float{0%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-40px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
+
+  /* هدر */
+  header{position:sticky;top:0;z-index:2;background:rgba(0,0,0,0.6);backdrop-filter:blur(2px);margin:14px auto;padding:14px;border-radius:8px;border-bottom:2px solid rgba(0,0,0,0.25);max-width:1100px;display:flex;align-items:center;justify-content:space-between}
+  .title{font-size:2.2rem;color:var(--yellow);font-weight:700;text-shadow:0 0 12px #000}
+  .clock{font-size:1.6rem;color:#fff200;font-weight:800}
+  .admin-btn{background:var(--yellow);border:none;color:#000;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+
+  main{max-width:1100px;margin:22px auto;padding:10px;position:relative;z-index:1}
+  .section{background:var(--panel);padding:18px;border-radius:14px;margin-bottom:18px;border:2px solid rgba(0,0,0,0.35)}
+  .section h2{color:var(--yellow);text-shadow:0 0 8px rgba(0,0,0,0.4);margin-top:0;margin-bottom:10px;text-align:center}
+
+  #current-shifts{min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  #shift-list div{padding:8px 0;font-size:1.05rem;color:#f4f4f4}
+
+  table{width:100%;border-collapse:separate;border-spacing:0 10px;margin-top:12px;direction:rtl}
+  thead th{background:linear-gradient(135deg,var(--yellow),#c68f00);color:#000;padding:14px;border-radius:8px}
+  tbody td{background:rgba(255,255,255,0.03);padding:12px;border-radius:8px}
+  tbody tr:hover td{background:rgba(255,204,0,0.06);cursor:default}
+  .status-active{color:#b2ff59}.status-vac{color:#ff8a80}
+
+  /* پنل‌های پاپ‌آپ */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000}
+  .panel{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#121212;padding:18px;border-radius:12px;z-index:1001;border:2px solid rgba(255,204,0,0.12);min-width:340px}
+  .panel h3{color:var(--yellow);margin:0 0 10px}
+  .panel input,.panel select{width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid rgba(255,204,0,0.08);background:#0f0f0f;color:#fff}
+  .panel button{background:var(--yellow);color:#000;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700;margin-right:8px}
+
+  @media (max-width:720px){
+    .title{font-size:1.3rem}.clock{font-size:1rem}
+    .ball{width:64px;height:64px;font-size:14px}
+    .panel{min-width:260px}
+  }
+</style>
 </head>
 <body>
-  <button class="admin-btn" onclick="openLogin()">مدیریت</button>
-  <h1>شیفت‌ها</h1>
-  <div id="current"></div>
-  <div id="table"></div>
+  <!-- پس‌زمینه توپ‌ها -->
+  <div id="balls-bg">
+    <div class="ball">TAXI</div>
+    <div class="ball">TAXI</div>
+    <div class="ball">TAXI</div>
+    <div class="ball">TAXI</div>
+  </div>
 
+  <header>
+    <div class="title">سیستم بررسی شیفت‌های تاکسی</div>
+    <div class="clock" id="clock">--:--:--</div>
+    <button class="admin-btn" onclick="openLogin()">مدیریت</button>
+  </header>
+
+  <main>
+    <section class="section" id="current-shifts">
+      <h2>شیفت فعلی</h2>
+      <div id="shift-list">در حال بررسی...</div>
+    </section>
+
+    <section class="section">
+      <h2>جدول کامل شیفت‌ها</h2>
+      <table id="full-schedule" aria-live="polite">
+        <thead>
+          <tr><th>نام</th><th>رنک</th><th>ساعت</th><th>وضعیت</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- overlay و پنل‌ها -->
   <div class="overlay" id="overlay"></div>
 
-  <div class="panel" id="loginPanel">
-    <h3>ورود</h3>
-    <input id="u" placeholder="username"><br><br>
-    <input id="p" placeholder="password" type="password"><br><br>
-    <button onclick="doLogin()">ورود</button>
-    <button onclick="closeLogin()">بستن</button>
+  <div class="panel" id="loginBox" aria-hidden="true">
+    <h3>ورود مدیریت</h3>
+    <input id="username" placeholder="یوزرنیم" autocomplete="username">
+    <input id="password" placeholder="پسورد" type="password" autocomplete="current-password">
+    <div style="text-align:left">
+      <button onclick="doLogin()">ورود</button>
+      <button onclick="closeLogin()" style="background:#666;color:#fff">بستن</button>
+    </div>
   </div>
 
-  <div class="panel" id="adminPanel">
+  <div class="panel" id="adminPanel" aria-hidden="true">
     <h3>پنل مدیریت</h3>
-    <select id="sel"></select><br><br>
-    <button onclick="toggleVacation()">اعمال/لغو مرخصی</button>
-    <button onclick="openChange()">تغییر تایم</button>
-    <button onclick="doLogout()">خروج</button>
+    <select id="sel" style="margin-bottom:8px"></select>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button onclick="toggleVacation()">اعمال/لغو مرخصی</button>
+      <button onclick="openChange()">تغییر تایم</button>
+    </div>
+    <div style="text-align:left">
+      <button onclick="doLogout()" style="background:#c0392b;color:#fff">خروج</button>
+    </div>
   </div>
 
-  <div class="panel" id="changePanel">
+  <div class="panel" id="changePanel" aria-hidden="true">
     <h3>تغییر تایم</h3>
-    <input id="ns" placeholder="08:00"> تا <input id="ne" placeholder="17:00"><br><br>
-    <button onclick="applyChange()">تایید</button>
-    <button onclick="closeChange()">بستن</button>
+    <select id="timeSel" style="margin-bottom:8px"></select>
+    <input id="newStart" placeholder="شروع (مثال: 20:00)">
+    <input id="newEnd" placeholder="پایان (مثال: 23:00)">
+    <div style="text-align:left;margin-top:8px">
+      <button onclick="changeTime()">تایید</button>
+      <button onclick="closeChange()" style="background:#666;color:#fff">بستن</button>
+    </div>
   </div>
 
 <script>
-/*
-  روش امنِ واقعی: لاگین باید سمت سرور بررسی بشه.
-  اینجا فقط یک بهبودِ کلیِ client-side برای پنهان‌سازی سریع انجام شد.
-  هشِ salt+password (SHA-256) را داخل code گذاشتم اما به‌صورت چندتکه (split)
-  تا view-source مستقیم یک خط پسورد را نشان ندهد.
-*/
-
-// --- sample shifts (local) ---
+/* داده محلی (مثل فایل اولیه خودت) */
 let shifts = [
-  { id:1, name:"Danyall Abbasi", rank:"Taxi Director", times:[{start:"20:00",end:"23:00"}], vacation:false },
-  { id:2, name:"Kourosh Zabeti", rank:"Taxi Deputy Director", times:[{start:"14:00",end:"17:00"}], vacation:false },
-  { id:3, name:"Parham Azizi", rank:"Taxi Attendant", times:[{start:"12:00",end:"12:01"}], vacation:false },
-  { id:4, name:"Abbas Abbasi", rank:"Taxi Attendant", times:[{start:"12:00",end:"15:00"}], vacation:false },
-  { id:5, name:"Parsa Rahimi", rank:"Taxi Attendant", times:[{start:"12:00",end:"15:00"}], vacation:false },
-  { id:6, name:"Taha Azizii", rank:"Taxi Attendant", times:[{start:"09:00",end:"12:00"}], vacation:false },
-  { id:7, name:"Arya Khazeie", rank:"Taxi Attendant", times:[{start:"20:30",end:"23:30"}], vacation:false }
+  { id:1, name:"Danyall Abbasi", rank:"Taxi Director", times:[{start:"20:00", end:"23:00"}], vacation:false },
+  { id:2, name:"Kourosh Zabeti", rank:"Taxi Deputy Director", times:[{start:"14:00", end:"17:00"}], vacation:false },
+  { id:3, name:"Parham Azizi", rank:"Taxi Attendant", times:[{start:"12:00", end:"12:01"}], vacation:false },
+  { id:4, name:"Abbas Abbasi", rank:"Taxi Attendant", times:[{start:"12:00", end:"15:00"}], vacation:false },
+  { id:5, name:"Parsa Rahimi", rank:"Taxi Attendant", times:[{start:"12:00", end:"15:00"}], vacation:false },
+  { id:6, name:"Taha Azizii", rank:"Taxi Attendant", times:[{start:"09:00", end:"12:00"}], vacation:false },
+  { id:7, name:"Arya Khazeie", rank:"Taxi Attendant", times:[{start:"20:30", end:"23:30"}], vacation:false }
 ];
 
-const API = ""; // no backend in this quick patch
+const $ = s => document.querySelector(s);
+function toPersianDigits(str){ return String(str).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]); }
 
-// --- HIDDEN hashed credential (salt+password hashed with SHA-256) ---
-// salt value (must match what was used to produce the hash)
-const _salt = atob("c29tZXNhbHQxMjM0NQ=="); // "somesalt12345" encoded base64 to hide plain text
-// hashed value hex stored split into parts to avoid single-line detection
+/* ساعت */
+function updateClock(){
+  const now = new Date();
+  $("#clock").textContent = `${toPersianDigits(String(now.getHours()).padStart(2,"0"))}:${toPersianDigits(String(now.getMinutes()).padStart(2,"0"))}:${toPersianDigits(String(now.getSeconds()).padStart(2,"0"))}`;
+}
+
+/* رندر جدول کامل */
+function renderFullSchedule(){
+  const tbody = $("#full-schedule tbody");
+  tbody.innerHTML = shifts.map(s => {
+    const t = s.times[0];
+    return `<tr>
+      <td style="text-align:right;padding-right:20px">${s.name}${s.vacation? ' <span style="color:#ff8a80">(مرخصی)</span>':''}</td>
+      <td>${s.rank}</td>
+      <td>${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}</td>
+      <td class="${s.vacation? 'status-vac':'status-active'}">${s.vacation? 'مرخصی':'فعال'}</td>
+    </tr>`;
+  }).join("");
+}
+
+/* رندر شیفت جاری */
+function renderCurrentShifts(){
+  const now = new Date();
+  const curMins = now.getHours()*60 + now.getMinutes();
+  const active = [];
+  for(const p of shifts){
+    if(p.vacation) continue;
+    for(const t of p.times){
+      const [sh,sm] = t.start.split(":").map(Number);
+      const [eh,em] = t.end.split(":").map(Number);
+      const sM = sh*60 + sm, eM = eh*60 + em;
+      let inShift=false;
+      if(sM <= eM) inShift = (curMins >= sM && curMins < eM);
+      else inShift = (curMins >= sM || curMins < eM); // cross-midnight
+      if(inShift){
+        const remain = (eM>curMins? eM-curMins : (24*60-curMins)+eM);
+        const rh = Math.floor(remain/60), rm = remain%60;
+        active.push(`${p.name} (${p.rank}) — ${rh>0? toPersianDigits(rh)+" ساعت و " : "" }${toPersianDigits(rm)} دقیقه مانده`);
+      }
+    }
+  }
+  $("#shift-list").innerHTML = active.length ? active.map(a=>`<div>${a}</div>`).join("") : "<div>در حال حاضر کسی در شیفت نیست</div>";
+}
+
+/* پنل‌ها */
+function openLogin(){ $("#overlay").style.display="block"; $("#loginBox").style.display="block"; }
+function closeLogin(){ $("#overlay").style.display="none"; $("#loginBox").style.display="none"; }
+function openPanel(){ $("#overlay").style.display="block"; $("#adminPanel").style.display="block"; fillSelect(); }
+function closePanel(){ $("#overlay").style.display="none"; $("#adminPanel").style.display="none"; $("#changePanel").style.display="none"; }
+function openChange(){ $("#changePanel").style.display="block"; fillTimeSelect(); }
+function closeChange(){ $("#changePanel").style.display="none"; }
+
+/* مدیریت client-side ساده */
+function fillSelect(){ $("#sel").innerHTML = shifts.map(s=>`<option value="${s.id}">${s.name}${s.vacation? ' (مرخصی)':''}</option>`).join(''); }
+function fillTimeSelect(){ $("#timeSel").innerHTML = shifts.map(s=>`<option value="${s.id}">${s.name}</option>`).join(''); }
+function toggleVacation(){ const id=Number($("#sel").value); const p=shifts.find(x=>x.id===id); if(p){ p.vacation=!p.vacation; renderFullSchedule(); renderCurrentShifts(); fillSelect(); } }
+function changeTime(){ const id=Number($("#timeSel").value); const ns=$("#newStart").value.trim(); const ne=$("#newEnd").value.trim(); const re=/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/; if(!re.test(ns)||!re.test(ne)){ alert("فرمت ساعت صحیح نیست (HH:MM)"); return;} const p=shifts.find(x=>x.id===id); if(p){ p.times[0].start=ns; p.times[0].end=ne; renderFullSchedule(); renderCurrentShifts(); closeChange(); } }
+function doLogout(){ closePanel(); }
+
+/* --------- لاگین (خفه‌شده در کلاینت) ---------- 
+   تاکید: روش امن سروری نیست. اینجا برای جلوگیری از دیدن ساده یوزر/پسورد در view-source انجام شده.
+   اگر بعداً خواستی، همینو با JWT و httpOnly cookie روی سرور جایگزین کنیم.
+*/
+const storedUser = "Vigilante";
+// هش salt+pass (SHA-256) به صورت چندتکه ذخیره شده تا توی سورس یک‌خطی دیده نشه.
+// salt هم به base64 نگه داشته شده.
+const _saltB64 = "c29tZXNhbHQxMjM0NQ=="; // "somesalt12345"
 const _hashParts = ["2af4789b05f9","356480bdbd72","4cd0e49d52b8","f7aa8581b373868b200a6b7cd952"];
-
-// join to reconstruct
-function getStoredHashHex(){
-  return _hashParts.join("");
-}
-
-// utility: convert hex to Uint8Array
-function hexToBytes(hex){
-  const bytes = new Uint8Array(hex.length/2);
-  for(let i=0;i<bytes.length;i++) bytes[i]=parseInt(hex.substr(i*2,2),16);
-  return bytes;
-}
-
-// compute SHA-256 of (salt + password) via Web Crypto, return hex
+function getStoredHash(){ return _hashParts.join(""); }
 async function sha256hex(text){
   const enc = new TextEncoder();
   const data = enc.encode(text);
@@ -93,94 +223,25 @@ async function sha256hex(text){
   return Array.from(bytes).map(b=>b.toString(16).padStart(2,"0")).join("");
 }
 
-// simple render functions
-function render(){
-  document.getElementById('table').innerHTML = `<table><tr><th>نام</th><th>رنک</th><th>ساعت</th><th>وضعیت</th></tr>` +
-    shifts.map(s=>`<tr><td>${s.name}</td><td>${s.rank}</td><td>${s.times[0].start} تا ${s.times[0].end}</td><td>${s.vacation? 'مرخصی':'فعال'}</td></tr>`).join('') +
-    `</table>`;
-  const now = new Date();
-  const cur = shifts.find(s=>{
-    if(s.vacation) return false;
-    const [sh,sm] = s.times[0].start.split(':').map(Number);
-    const [eh,em] = s.times[0].end.split(':').map(Number);
-    const curM = now.getHours()*60 + now.getMinutes();
-    const sM = sh*60 + sm;
-    const eM = eh*60 + em;
-    if(sM <= eM) return curM>=sM && curM<eM;
-    return curM>=sM || curM<eM;
-  });
-  document.getElementById('current').innerText = cur ? `${cur.name} (${cur.rank}) در حال شیفت` : 'در حال حاضر کسی در شیفت نیست';
-}
-
-// --- login flow using salted SHA-256 check on client (obfuscated storage) ---
-function openLogin(){ document.getElementById('overlay').style.display='block'; document.getElementById('loginPanel').style.display='block'; }
-function closeLogin(){ document.getElementById('overlay').style.display='none'; document.getElementById('loginPanel').style.display='none'; }
-function openAdmin(){ document.getElementById('overlay').style.display='block'; document.getElementById('adminPanel').style.display='block'; fillSelect(); }
-function closePanel(){ document.getElementById('overlay').style.display='none'; document.getElementById('adminPanel').style.display='none'; document.getElementById('changePanel').style.display='none'; }
-
 async function doLogin(){
-  const username = document.getElementById('u').value.trim();
-  const password = document.getElementById('p').value;
-  if(!username || !password){ alert('یوزرنیم و پسورد را وارد کنید'); return; }
-
-  // compute hash of salt + password
-  const candidate = await sha256hex(_salt + password);
-  const stored = getStoredHashHex();
-
-  // simple username check (we keep username in plain as "Vigilante" - you can change)
-  if(username !== "Vigilante"){
-    alert('نام کاربری یا رمز اشتباه است');
-    return;
-  }
-
-  if(candidate === stored){
-    // success
-    closeLogin();
-    openAdmin();
+  const u = $("#username").value.trim(), p = $("#password").value;
+  if(!u || !p){ alert("یوزرنیم و پسورد را وارد کنید"); return; }
+  if(u !== storedUser){ alert("نام کاربری یا رمز اشتباه است"); return; }
+  const salt = atob(_saltB64);
+  const candidate = await sha256hex(salt + p);
+  if(candidate === getStoredHash()){
+    // موفق
+    $("#username").value = ""; $("#password").value = "";
+    closeLogin(); openPanel();
   } else {
-    alert('نام کاربری یا رمز اشتباه است');
+    alert("نام کاربری یا رمز اشتباه است");
+    $("#password").value="";
   }
-
-  // clear password input quickly
-  document.getElementById('p').value = "";
 }
 
-// admin actions (local only)
-async function toggleVacation(){
-  const id = Number(document.getElementById('sel').value);
-  const p = shifts.find(s=>s.id===id);
-  if(p){ p.vacation = !p.vacation; render(); fillSelect(); }
-}
-
-function fillSelect(){ const sel = document.getElementById('sel'); sel.innerHTML = shifts.map(s=>`<option value="${s.id}">${s.name}${s.vacation? ' (مرخصی)':''}</option>`).join(''); }
-
-function openChange(){ document.getElementById('changePanel').style.display='block'; }
-function closeChange(){ document.getElementById('changePanel').style.display='none'; }
-function applyChange(){
-  const id = Number(document.getElementById('sel').value);
-  const ns = document.getElementById('ns').value;
-  const ne = document.getElementById('ne').value;
-  const p = shifts.find(s=>s.id===id);
-  if(!p){ alert('انتخاب نامناسب'); return; }
-  p.times[0].start = ns || p.times[0].start;
-  p.times[0].end = ne || p.times[0].end;
-  render(); fillSelect(); closeChange();
-}
-
-function doLogout(){ closePanel(); }
-
-// quick anti-casual-devtools (not secure, just deterrent)
-document.addEventListener('contextmenu', e=>{ e.preventDefault(); });
-document.addEventListener('keydown', e=> {
-  if((e.ctrlKey && e.shiftKey && (e.key==='I' || e.key==='i')) || (e.key==='F12')) {
-    e.preventDefault();
-    alert('دسترسی محدود است.');
-  }
-});
-
-// init
-render();
-setInterval(render, 15000);
+/* init */
+updateClock(); setInterval(updateClock,1000);
+renderFullSchedule(); renderCurrentShifts(); setInterval(renderCurrentShifts,1000);
 </script>
 </body>
 </html>
