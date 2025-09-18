@@ -30,7 +30,10 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: linear-gradient(45deg, rgba(255, 204, 0, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(255, 204, 0, 0.1) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255, 204, 0, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(255, 204, 0, 0.1) 75%);
+      background-image: linear-gradient(45deg, rgba(255, 204, 0, 0.1) 25%, transparent 25%), 
+                        linear-gradient(-45deg, rgba(255, 204, 0, 0.1) 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, rgba(255, 204, 0, 0.1) 75%), 
+                        linear-gradient(-45deg, transparent 75%, rgba(255, 204, 0, 0.1) 75%);
       background-size: 50px 50px;
       background-position: 0 0, 0 50px, 50px -50px, -50px 0px;
       opacity: 0.8;
@@ -186,16 +189,17 @@ const shifts = [
   { name: "Ahmad Aghai ", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "18:00", end: "21:00" }], vacation: false },
   { name: "Abbas Abbasi", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "12:00", end: "15:00" }], vacation: false },
   { name: "Parsa Rahimi", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "12:00", end: "15:00" }], vacation: false },
-{ name: "Javad Hashiemy", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "15:00", end: "16:30" }], vacation: false },  
-{ name: "Javad Hashiemy", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "19:00", end: "20:30" }], vacation: false },  
-
+  { name: "Javad Hashiemy", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "15:00", end: "16:30" }], vacation: false },  
+  { name: "Javad Hashiemy", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "19:00", end: "20:30" }], vacation: false }
 ];
+
 // عدد کمتر = رتبه بالاتر
 const rankOrder = {
-  "Taxi Director": 0
-  "Taxi Deputy Director": 2
+  "Taxi Director": 0,
+  "Taxi Deputy Director": 2,
   "Taxi Attendant": 3
 };
+
 function $(s){return document.querySelector(s);}
 function toPersianDigits(str){return String(str).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);}
 function timeToMins(t){const [h,m]=t.split(":").map(Number);return h*60+m;}
@@ -213,7 +217,6 @@ function updateClock(){
 
 function renderFullSchedule() {
   const tbody=$("#full-schedule tbody");
-  // جدا کردن دنیال
   const dany=shifts.filter(p=>p.name==="Danyall Abbasi");
   const others=shifts.filter(p=>p.name!=="Danyall Abbasi").slice().sort((a,b)=>(rankOrder[a.rank]||99)-(rankOrder[b.rank]||99));
   const all=[...dany,...others];
@@ -231,24 +234,21 @@ function renderCurrentShifts(){
   const curMins=now.getHours()*60+now.getMinutes();
   const active=[];
   shifts.forEach(p=>{
-    if(p.vacation)return;
+    if(p.vacation) return;
     p.times.forEach(t=>{
-      const start=timeToMins(t.start),end=timeToMins(t.end);
-      let inShift=false,remain=0;
+      const start=timeToMins(t.start), end=timeToMins(t.end);
+      let inShift=false, remain=0;
       if(start<end){
-        if(curMins>=start && curMins<end){inShift=true;remain=end-curMins;}
+        if(curMins>=start && curMins<end){inShift=true; remain=end-curMins;}
       }else{
-        if(curMins>=start || curMins<end){
-          inShift=true;remain=curMins>=start?(24*60-curMins)+end:end-curMins;
-        }
+        if(curMins>=start || curMins<end){inShift=true; remain=curMins>=start?(24*60-curMins)+end:end-curMins;}
       }
       if(inShift){
-        const rh=Math.floor(remain/60),rm=remain%60;
-        active.push({name:p.name,rank:rankOrder[p.rank]||99,text:`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`});
+        const rh=Math.floor(remain/60), rm=remain%60;
+        active.push({name:p.name, rank:rankOrder[p.rank]||99, text:`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`});
       }
     });
   });
-  // دنیال بالا
   const dany=active.filter(a=>a.name==="Danyall Abbasi");
   const others=active.filter(a=>a.name!=="Danyall Abbasi").sort((a,b)=>a.rank-b.rank);
   const finalList=[...dany,...others];
@@ -263,6 +263,3 @@ setInterval(renderCurrentShifts,1000);
 </script>
 </body>
 </html>
-
-
-
