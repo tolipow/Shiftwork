@@ -112,14 +112,6 @@
       border: none;
       padding: 15px;
     }
-    th:first-child {
-      border-top-right-radius: 10px;
-      border-bottom-right-radius: 10px;
-    }
-    th:last-child {
-      border-top-left-radius: 10px;
-      border-bottom-left-radius: 10px;
-    }
     td {
       background-color: rgba(51, 51, 51, 0.8);
       font-size: 1rem;
@@ -129,11 +121,8 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
       text-align: center;
     }
-    tr:hover td {
-      background-color: rgba(68, 68, 68, 0.8);
-    }
-    .taxi-logo-left,
-    .taxi-logo-right {
+    tr:hover td {background-color: rgba(68, 68, 68, 0.8);}
+    .taxi-logo-left,.taxi-logo-right {
       position: absolute;
       width: 100px;
       height: 100px;
@@ -149,26 +138,18 @@
       animation: pulse 1.5s infinite alternate;
       box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
     }
-    .taxi-logo-left {
-      top: 200px;
-      left: 50px;
-      transform: rotate(-30deg);
-    }
-    .taxi-logo-right {
-      top: 400px;
-      right: 50px;
-      transform: rotate(30deg);
-    }
+    .taxi-logo-left {top: 200px;left: 50px;transform: rotate(-30deg);}
+    .taxi-logo-right {top: 400px;right: 50px;transform: rotate(30deg);}
     @keyframes pulse {
-      from {transform: scale(1); opacity: 0.9;}
-      to {transform: scale(1.05); opacity: 1;}
+      from {transform: scale(1);opacity: 0.9;}
+      to {transform: scale(1.05);opacity: 1;}
     }
     @media (max-width: 768px) {
       .title {font-size: 1.8rem;}
       .clock {font-size: 1.5rem;}
-      header {flex-direction: column; padding: 10px;}
+      header {flex-direction: column;padding: 10px;}
       .section {padding: 15px 20px;}
-      th, td {padding: 8px 10px; font-size: 0.9rem;}
+      th, td {padding: 8px 10px;font-size: 0.9rem;}
       .taxi-logo-left,.taxi-logo-right {width: 80px;height: 80px;font-size: 1.5em;}
       .taxi-logo-left {top: 150px;left: 20px;}
       .taxi-logo-right {top: 300px;right: 20px;}
@@ -206,7 +187,7 @@ const shifts = [
   { name: "Parsa Rahimi", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "12:00", end: "15:00" }], vacation: false },
   { name: "Arya Khazeie", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "20:30", end: "23:30" }], vacation: false }
 ];
-// ترتیب درست (عدد کمتر = رتبه بالاتر)
+// عدد کمتر = رتبه بالاتر
 const rankOrder = {
   "Taxi Director": 0,
   "Taxi Deputy Director": 1,
@@ -228,17 +209,19 @@ function updateClock(){
   $("#clock").textContent=toPersianDigits(timeStr);
 }
 
-function renderFullSchedule(){
+function renderFullSchedule() {
   const tbody=$("#full-schedule tbody");
-  tbody.innerHTML=shifts.slice()
-    .sort((a,b)=>(rankOrder[a.rank]||99)-(rankOrder[b.rank]||99))
-    .map(p=>p.times.map(t=>`
-      <tr>
-        <td>${p.name}${p.vacation?" (مرخصی)":""}</td>
-        <td>${p.rank}</td>
-        <td>${t.days}</td>
-        <td>${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}</td>
-      </tr>`).join("")).join("");
+  // جدا کردن دنیال
+  const dany=shifts.filter(p=>p.name==="Danyall Abbasi");
+  const others=shifts.filter(p=>p.name!=="Danyall Abbasi").slice().sort((a,b)=>(rankOrder[a.rank]||99)-(rankOrder[b.rank]||99));
+  const all=[...dany,...others];
+  tbody.innerHTML=all.map(p=>p.times.map(t=>`
+    <tr>
+      <td>${p.name}${p.vacation?" (مرخصی)":""}</td>
+      <td>${p.rank}</td>
+      <td>${t.days}</td>
+      <td>${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}</td>
+    </tr>`).join("")).join("");
 }
 
 function renderCurrentShifts(){
@@ -259,12 +242,15 @@ function renderCurrentShifts(){
       }
       if(inShift){
         const rh=Math.floor(remain/60),rm=remain%60;
-        active.push({rank:rankOrder[p.rank]||99,text:`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`});
+        active.push({name:p.name,rank:rankOrder[p.rank]||99,text:`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`});
       }
     });
   });
-  active.sort((a,b)=>a.rank-b.rank);
-  $("#shift-list").innerHTML=active.length?active.map(x=>`<div>${x.text}</div>`).join(""):"<div>در حال حاضر کسی در شیفت نیست</div>";
+  // دنیال بالا
+  const dany=active.filter(a=>a.name==="Danyall Abbasi");
+  const others=active.filter(a=>a.name!=="Danyall Abbasi").sort((a,b)=>a.rank-b.rank);
+  const finalList=[...dany,...others];
+  $("#shift-list").innerHTML=finalList.length?finalList.map(x=>`<div>${x.text}</div>`).join(""):"<div>در حال حاضر کسی در شیفت نیست</div>";
 }
 
 updateClock();
