@@ -184,16 +184,16 @@ const shifts = [
   { name: "Parham Azizi", rank: "Taxi Deputy Director", times: [{ days: "همه روزها", start: "12:00", end: "12:01" }], vacation: false },
   { name: "Taha Azizii", rank: "Taxi Deputy Director", times: [{ days: "همه روزها", start: "9:00", end: "12:00" }], vacation: false },
   { name: "Ahmad Aghai ", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "18:00", end: "21:00" }], vacation: false },
-  
   { name: "Abbas Abbasi", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "12:00", end: "15:00" }], vacation: false },
   { name: "Parsa Rahimi", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "12:00", end: "15:00" }], vacation: false },
-  { name: "Arya Khazeie", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "20:30", end: "23:30" }], vacation: false }
+{ name: "Javad Hashiemy", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "15:00", end: "16:30" }], vacation: false },  
+{ name: "Javad Hashiemy", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "19:00", end: "20:30" }], vacation: false },  
+
 ];
 // عدد کمتر = رتبه بالاتر
 const rankOrder = {
-  "Taxi Director": 0,
-  "Taxi Deputy Director": 1,
-  "Taxi Manager": 2,
+  "Taxi Director": 0
+  "Taxi Deputy Director": 2
   "Taxi Attendant": 3
 };
 function $(s){return document.querySelector(s);}
@@ -263,4 +263,5 @@ setInterval(renderCurrentShifts,1000);
 </script>
 </body>
 </html>
+
 
