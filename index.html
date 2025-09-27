@@ -182,27 +182,29 @@
 </div>
 
 <script>
+// ---- داده‌های شیفت ----
 const shifts = [
   { name: "Danyall Abbasi", rank: "Taxi Director", times: [{ days: "همه روزها", start: "20:00", end: "23:00" }], vacation: false },
-  { name: "Parham Azizi", rank: "Taxi  Director", times: [{ days: "همه روزها", start: "12:00", end: "12:01" }], vacation: false },
+  { name: "Parham Azizi", rank: "Taxi Director", times: [{ days: "همه روزها", start: "12:00", end: "12:01" }], vacation: false },
   { name: "Taha Azizii", rank: "Taxi Deputy Director", times: [{ days: "همه روزها", start: "9:00", end: "12:00" }], vacation: false },
-  { name: "Ahmad Aghai ", rank: "Taxi Deputy Director ", times: [{ days: "همه روزها", start: "18:00", end: "21:00" }], vacation: false },
+  { name: "Ahmad Aghai", rank: "Taxi Deputy Director", times: [{ days: "همه روزها", start: "18:00", end: "21:00" }], vacation: false },
   { name: "Abbas Abbasi", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "12:00", end: "15:00" }], vacation: false },
   { name: "Javad Hashiemy", rank: "Taxi Attendant", times: [{ days: "همه روزها", start: "20:00", end: "23:00" }], vacation: false },  
-  
 ];
 
+// ---- ترتیب رتبه ----
 // عدد کمتر = رتبه بالاتر
 const rankOrder = {
-  "Taxi Director": 2,
+  "Taxi Director": 1,
   "Taxi Deputy Director": 2,
-  "Taxi Attendant": 2
+  "Taxi Attendant": 3
 };
 
 function $(s){return document.querySelector(s);}
 function toPersianDigits(str){return String(str).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);}
 function timeToMins(t){const [h,m]=t.split(":").map(Number);return h*60+m;}
 
+// ---- ساعت ----
 function updateClock(){
   const now=new Date();
   const timeStr=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}:${String(now.getSeconds()).padStart(2,"0")}`;
@@ -214,11 +216,11 @@ function updateClock(){
   $("#clock").textContent=toPersianDigits(timeStr);
 }
 
+// ---- جدول کامل ----
 function renderFullSchedule() {
   const tbody=$("#full-schedule tbody");
-  const dany=shifts.filter(p=>p.name==="Danyall Abbasi");
-  const others=shifts.filter(p=>p.name!=="Danyall Abbasi").slice().sort((a,b)=>(rankOrder[a.rank]||99)-(rankOrder[b.rank]||99));
-  const all=[...dany,...others];
+  // مرتب‌سازی بر اساس رتبه
+  const all=shifts.slice().sort((a,b)=>(rankOrder[a.rank]||99)-(rankOrder[b.rank]||99));
   tbody.innerHTML=all.map(p=>p.times.map(t=>`
     <tr>
       <td>${p.name}${p.vacation?" (مرخصی)":""}</td>
@@ -228,6 +230,7 @@ function renderFullSchedule() {
     </tr>`).join("")).join("");
 }
 
+// ---- شیفت فعلی ----
 function renderCurrentShifts(){
   const now=new Date();
   const curMins=now.getHours()*60+now.getMinutes();
@@ -244,16 +247,20 @@ function renderCurrentShifts(){
       }
       if(inShift){
         const rh=Math.floor(remain/60), rm=remain%60;
-        active.push({name:p.name, rank:rankOrder[p.rank]||99, text:`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`});
+        active.push({
+          name:p.name,
+          rank:rankOrder[p.rank]||99,
+          text:`${p.name} (${p.rank}) ${rh>0?toPersianDigits(rh)+" ساعت و ":""}${toPersianDigits(rm)} دقیقه مانده`
+        });
       }
     });
   });
-  const dany=active.filter(a=>a.name==="Danyall Abbasi");
-  const others=active.filter(a=>a.name!=="Danyall Abbasi").sort((a,b)=>a.rank-b.rank);
-  const finalList=[...dany,...others];
+  // مرتب‌سازی افراد فعال هم بر اساس رتبه
+  const finalList=active.sort((a,b)=>a.rank-b.rank);
   $("#shift-list").innerHTML=finalList.length?finalList.map(x=>`<div>${x.text}</div>`).join(""):"<div>در حال حاضر کسی در شیفت نیست</div>";
 }
 
+// ---- اجرا ----
 updateClock();
 renderFullSchedule();
 renderCurrentShifts();
@@ -262,5 +269,3 @@ setInterval(renderCurrentShifts,1000);
 </script>
 </body>
 </html>
-
-
